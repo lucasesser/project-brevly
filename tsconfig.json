@@ -10,7 +10,8 @@
       "ESNext.Collection",
       "ESNext.Error",
       "ESNext.Iterator",
-      "ESNext.Promise"
+      "ESNext.Promise",
+      "DOM"
     ],
     "module": "esnext",
     "target": "esnext",
