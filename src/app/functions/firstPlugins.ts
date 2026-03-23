@@ -1,12 +1,23 @@
-import type {FastifyInstance} from "fastify"
+import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
+import z from "zod"
 
-interface routesType {
-    fastify: FastifyInstance,
-    options: object
-}
+export const routes: FastifyPluginAsyncZod = async server => {
+    server.get('/', (req, res) => {
+        return res.send("teste")
+    })
 
-export default function routes (fastify: routesType, options: routesType) {
-    fastify.get('/', (req, res) => {
-        res.send("teste")
+    server.post(
+        '/teste',
+        {
+            schema: {
+                summary: 'testando',
+                tags: ['testeteste'],
+                querystring: z.object({item1: z.string()}),
+                response: {200: z.string()}
+            }
+        },
+        async (req, res) => {
+            const t: string = 'teste123123'
+            return res.status(200).send(t)
     })
 }
