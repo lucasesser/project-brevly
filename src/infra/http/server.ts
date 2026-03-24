@@ -1,15 +1,16 @@
 import fastifyCors from "@fastify/cors";
-import {fastify} from "fastify";
-import {routes} from "../../app/functions/firstPlugins";
-import fastifySwaggerUi from "@fastify/swagger-ui";
 import fastifySwagger from "@fastify/swagger";
-import { transformSwaggerSchema } from "./transform-swagger-schema";
+import fastifySwaggerUi from "@fastify/swagger-ui";
+import { jsonSchemaTransform, serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
+import { fastify } from "fastify";
+import { routes } from "../../app/functions/firstPlugins";
 
 const server = fastify({logger: true})
 
-await server.register(fastifyCors, {origin: '*'}).then(() => {
-    console.log("HTTP server running!");
-})
+server.setValidatorCompiler(validatorCompiler)
+server.setSerializerCompiler(serializerCompiler)
+
+await server.register(fastifyCors, {origin: '*'})
 
 server.register(fastifySwagger, {
     openapi: {
@@ -18,7 +19,7 @@ server.register(fastifySwagger, {
             version: "1.0.0"
         }
     },
-    transform: transformSwaggerSchema
+    transform: jsonSchemaTransform
 })
 
 server.register(fastifySwaggerUi, {
@@ -27,7 +28,7 @@ server.register(fastifySwaggerUi, {
 
 server.register(routes)
 
-server.listen({port: 3333}, (err, adress) => {
+server.listen({port: 3333}, (err) => {   
     if(err){
         server.log.error(err)
         process.exit(1)
