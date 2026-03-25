@@ -1,14 +1,23 @@
 import fastifyCors from "@fastify/cors";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
-import { jsonSchemaTransform, serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
+import { hasZodFastifySchemaValidationErrors, jsonSchemaTransform, serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import { fastify } from "fastify";
-import { routes } from "../../app/functions/firstPlugins";
+import { newLink } from "./routes/newLink";
 
 const server = fastify({logger: true})
 
 server.setValidatorCompiler(validatorCompiler)
 server.setSerializerCompiler(serializerCompiler)
+
+server.setErrorHandler((error, request, reply) => {
+    if (hasZodFastifySchemaValidationErrors(error)) {
+        return reply.status(400).send({
+            message: 'Validation error',
+            issues: error.validation
+        })
+    }
+})
 
 await server.register(fastifyCors, {origin: '*'})
 
@@ -26,7 +35,7 @@ server.register(fastifySwaggerUi, {
     routePrefix: '/docs'
 })
 
-server.register(routes)
+server.register(newLink)
 
 server.listen({port: 3333}, (err) => {   
     if(err){
