@@ -1,5 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js"
 import { env } from "../../env";
+import postgres from "postgres";
+import {schema} from './schemas'
 
-const db = drizzle(env.DATABASE_URL);
-const result = db.execute('select 1')
+const pg = postgres(env.DATABASE_URL)
+export const db = drizzle(pg, {schema});
