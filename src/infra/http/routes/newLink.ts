@@ -1,5 +1,6 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import z from "zod";
+import createNewLink from "../../../app/functions/createNewLink";
 
 export const newLink: FastifyPluginAsyncZod = async server => {
     server.post(
@@ -20,7 +21,9 @@ export const newLink: FastifyPluginAsyncZod = async server => {
             }
         },
         (req, res) => {
-            const {shortLink} = req.body
+            const {original, shortLink} = req.body
+
+            createNewLink({original, shortLink})
 
             res.status(200).send({newLink: shortLink})
         }
