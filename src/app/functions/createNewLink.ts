@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import z from "zod";
 import { db } from "../../infra/db";
 import { links } from "../../infra/db/schemas/links";
@@ -18,6 +17,3 @@ export default function createNewLink(input: newLinkInput) {
     console.log(teste);
     
 }
-=======
-import { db } from "../../infra/db";
->>>>>>> ba074f5269a2861d027e02ff2235604f75c87064
