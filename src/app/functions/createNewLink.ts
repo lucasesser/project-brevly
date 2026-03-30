@@ -9,11 +9,12 @@ const newLinkTypes = z.object({
 
 type newLinkInput = z.input<typeof newLinkTypes>
 
-export default function createNewLink(input: newLinkInput) {
+export default async function createNewLink(input: newLinkInput) {
     const { original, shortLink } = input
 
-    const teste = db.insert(links).values({linkOriginal: original, linkEncurtado: shortLink})
-
-    console.log(teste);
-    
+    try {
+        await db.insert(links).values({linkOriginal: original, linkEncurtado: shortLink});        
+    } catch (error) {
+        console.log({error});
+    }    
 }

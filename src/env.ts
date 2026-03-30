@@ -1,8 +1,10 @@
+import dotenv from 'dotenv'
 import z from "zod"; 
+
+dotenv.config()
 
 const envSchema = z.object({
     DATABASE_URL: z.url().startsWith("postgres://")
 })
-console.log(process.env.DATABASE_URL);
 
 export const env = envSchema.parse(process.env)
