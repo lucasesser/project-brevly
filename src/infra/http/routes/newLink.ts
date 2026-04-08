@@ -1,6 +1,7 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import z from "zod";
 import createNewLink from "../../../app/functions/createNewLink";
+import { isRight, unwrapEither } from "../../shared/either";
 
 export const newLink: FastifyPluginAsyncZod = async server => {
     server.post(
@@ -16,16 +17,31 @@ export const newLink: FastifyPluginAsyncZod = async server => {
                 response: {
                     200: z.object({
                       newLink: z.string()  
+                    }),
+                    400: z.object({
+                        message: z.string()
                     })
                 }
             }
         },
-        (req, res) => {
+        async (req, res) => {
             const {original, shortLink} = req.body
 
-            createNewLink({original, shortLink})
+            const createLink = await createNewLink({original, shortLink})
 
-            res.status(200).send({newLink: shortLink})
+            if(isRight(createLink)){
+                res.status(200).send({newLink: shortLink})
+                console.log("TESTEEEEE");
+                
+            }
+
+            const error = unwrapEither(createLink)
+
+            switch(error.constructor.name) {
+                case 'insertError':
+                    return res.status(400).send({message: error.message})
+            }
+
         }
     )
 }

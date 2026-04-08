@@ -6,7 +6,9 @@
   "author": "Esser",
   "license": "MIT",
   "scripts": {
-    "dev": "tsx watch src/infra/http/server.ts"
+    "dev": "tsx watch src/infra/http/server.ts",
+    "db-generate": "yarn drizzle-kit generate",
+    "db-migrate": "yarn drizzle-kit migrate"
   },
   "dependencies": {
     "@fastify/cors": "^11.2.0",
