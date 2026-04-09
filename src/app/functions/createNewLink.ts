@@ -19,7 +19,7 @@ export default async function createNewLink(input: newLinkInput): Promise<Either
         await db.insert(links).values({linkOriginal: original, linkEncurtado: shortLink});  
         return makeRight("") 
     } catch (error: any) {
-        console.log(error.cause?.detail);
+        console.log(error.cause?.code);
         return makeLeft(new insertError)
     }    
 }
