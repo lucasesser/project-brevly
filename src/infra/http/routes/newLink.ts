@@ -18,9 +18,7 @@ export const newLink: FastifyPluginAsyncZod = async server => {
                     200: z.object({
                       newLink: z.string()  
                     }),
-                    400: z.object({
-                        message: z.string()
-                    })
+                    503: z.string().default("Service Unavailable")
                 }
             }
         },
@@ -31,17 +29,15 @@ export const newLink: FastifyPluginAsyncZod = async server => {
 
             if(isRight(createLink)){
                 res.status(200).send({newLink: shortLink})
-                console.log("TESTEEEEE");
+                console.log("TESTEEEEE");   
+            }else {
+                const error = unwrapEither(createLink) 
                 
+                switch(error.constructor.name) {
+                    case 'insertError':
+                        return res.status(503).send(error.message)
+                }   
             }
-
-            const error = unwrapEither(createLink)
-
-            switch(error.constructor.name) {
-                case 'insertError':
-                    return res.status(400).send({message: error.message})
-            }
-
         }
     )
 }
