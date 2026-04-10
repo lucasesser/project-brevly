@@ -2,8 +2,8 @@ import z from "zod";
 import { db } from "../../infra/db";
 import { links } from "../../infra/db/schemas/links";
 import { type Either, makeLeft, makeRight } from "../../infra/shared/either";
+import { duplicatedValue } from "./errors/duplicatedValue";
 import { insertError } from "./errors/insertError";
-import type { PostgresError } from "postgres";
 
 const newLinkTypes = z.object({
     original: z.string(),
@@ -19,7 +19,13 @@ export default async function createNewLink(input: newLinkInput): Promise<Either
         await db.insert(links).values({linkOriginal: original, linkEncurtado: shortLink});  
         return makeRight("") 
     } catch (error: any) {
-        console.log(error.cause?.code);
+        console.log(error.cause?.detail);
+        
+        if(error.cause?.detail === 'Key ("linkEncurtado")=(string) already exists.') {
+            console.log("testeeee");
+            
+            return makeLeft(new duplicatedValue)
+        }
         return makeLeft(new insertError)
     }    
 }

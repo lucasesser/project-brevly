@@ -11,13 +11,14 @@ export const newLink: FastifyPluginAsyncZod = async server => {
                 summary: 'Create new link',
                 tags: ['Create new link'],
                 body: z.object({
-                    original: z.string(),
+                    original: z.url(),
                     shortLink: z.string()
                 }),
                 response: {
                     200: z.object({
                       newLink: z.string()  
                     }),
+                    409: z.string().default('The value "original" alredys exists.'),
                     503: z.string().default("Service Unavailable")
                 }
             }
@@ -34,9 +35,11 @@ export const newLink: FastifyPluginAsyncZod = async server => {
                 const error = unwrapEither(createLink) 
                 
                 switch(error.constructor.name) {
+                    case 'duplicatedValue':
+                        return res.status(409).send(error.message)
                     case 'insertError':
                         return res.status(503).send(error.message)
-                }   
+                } 
             }
         }
     )
