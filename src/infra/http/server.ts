@@ -4,6 +4,9 @@ import fastifySwaggerUi from "@fastify/swagger-ui";
 import { fastify } from "fastify";
 import { hasZodFastifySchemaValidationErrors, jsonSchemaTransform, serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import { newLink } from "./routes/newLink";
+import { deleteLink } from "./routes/deleteLink";
+import { accessLink } from "./routes/acessLink";
+import { listUrls } from "./routes/listUrls";
 
 const server = fastify({logger: true})
 
@@ -36,6 +39,9 @@ server.register(fastifySwaggerUi, {
 })
 
 server.register(newLink)
+server.register(deleteLink)
+server.register(accessLink)
+server.register(listUrls)
 
 server.listen({port: 3333}, (err) => {   
     if(err){

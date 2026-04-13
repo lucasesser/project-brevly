@@ -12,20 +12,18 @@ const newLinkTypes = z.object({
 
 type newLinkInput = z.input<typeof newLinkTypes>
 
-export default async function createNewLink(input: newLinkInput): Promise<Either<insertError,string>> {
+export default async function createNewLink(input: newLinkInput): Promise<Either<insertError | duplicatedValue,string>> {
     const { original, shortLink } = input
 
     try {
         await db.insert(links).values({linkOriginal: original, linkEncurtado: shortLink});  
+
         return makeRight("") 
     } catch (error: any) {
-        console.log(error.cause?.detail);
-        
-        if(error.cause?.detail === 'Key ("linkEncurtado")=(string) already exists.') {
-            console.log("testeeee");
-            
+        if(error.cause?.code === '23505') {       
             return makeLeft(new duplicatedValue)
         }
+        
         return makeLeft(new insertError)
     }    
 }

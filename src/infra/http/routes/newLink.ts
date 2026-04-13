@@ -12,13 +12,13 @@ export const newLink: FastifyPluginAsyncZod = async server => {
                 tags: ['Create new link'],
                 body: z.object({
                     original: z.url(),
-                    shortLink: z.string()
+                    shortLink: z.string().min(2).max(60).regex(/^[a-zA-Z0-9]+$/, "Alphanumeric only, no spaces")
                 }),
                 response: {
                     200: z.object({
                       newLink: z.string()  
                     }),
-                    409: z.string().default('The value "original" alredys exists.'),
+                    409: z.string().default('The "original" value alredys exists.'),
                     503: z.string().default("Service Unavailable")
                 }
             }
