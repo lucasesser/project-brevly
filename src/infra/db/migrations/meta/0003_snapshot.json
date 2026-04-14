@@ -1,0 +1,65 @@
+{
+  "id": "cf66db41-618e-4fd7-9914-28d2364b7d65",
+  "prevId": "d555190e-c7b7-48a2-907b-6021e281b158",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.links": {
+      "name": "links",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "linkOriginal": {
+          "name": "linkOriginal",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "linkEncurtado": {
+          "name": "linkEncurtado",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "accessCount": {
+          "name": "accessCount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "links_linkEncurtado_unique": {
+          "name": "links_linkEncurtado_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "linkEncurtado"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
