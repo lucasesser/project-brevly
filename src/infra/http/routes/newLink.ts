@@ -29,8 +29,7 @@ export const newLink: FastifyPluginAsyncZod = async server => {
             const createLink = await createNewLink({original, shortLink})
 
             if(isRight(createLink)){
-                res.status(200).send({newLink: shortLink})
-                console.log("TESTEEEEE");   
+                return res.status(200).send({newLink: shortLink})
             }else {
                 const error = unwrapEither(createLink) 
                 

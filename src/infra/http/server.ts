@@ -7,6 +7,7 @@ import { newLink } from "./routes/newLink";
 import { deleteLink } from "./routes/deleteLink";
 import { accessLink } from "./routes/acessLink";
 import { listUrls } from "./routes/listUrls";
+import { exportLinksList } from "./routes/exportLinksList";
 
 const server = fastify({logger: true})
 
@@ -42,6 +43,7 @@ server.register(newLink)
 server.register(deleteLink)
 server.register(accessLink)
 server.register(listUrls)
+server.register(exportLinksList)
 
 server.listen({port: 3333}, (err) => {   
     if(err){
