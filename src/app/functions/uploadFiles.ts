@@ -28,4 +28,6 @@ export async function uploadFiles(input: inputType) {
     })
 
     await upload.done()
+
+    console.log(upload);
 }
