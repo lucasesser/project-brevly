@@ -4,26 +4,54 @@ import { db, pg } from "../../infra/db";
 import { links } from "../../infra/db/schemas/links";
 import { stringify } from "csv-stringify";
 import { uploadFiles } from "./uploadFiles";
+import { Either, makeRight } from "../../infra/shared/either";
+import z from "zod";
+import { ilike } from "drizzle-orm";
 
-export async function exportLinks(): Promise<string> {
-    const {sql, params} = db.select({id: links.id, linkOriginal: links.linkOriginal, linkEncurtado: links.linkEncurtado, accessCount: links.accessCount}).from(links).toSQL()
+const inputSchema = z.object({
+  searchQuery: z.string().optional()
+})
 
-    const consulta = pg.unsafe(sql, params as string[]).cursor(2)
+type inputType = z.input<typeof inputSchema>
 
-    const csv = stringify({
-       delimiter: ",",
-        header: true,
-        columns: [
-            {key: "id", header: "ID"},
-            {key: "linkOriginal", header: "Link original"},
-            {key: "linkEncurtado", header: "Link encurtado"},
-            {key: "accessCount", header: "Contagem de acesso"}
-        ]
+type exportLinksOutput = {
+  url: string
+}
+
+export async function exportLinks(input: inputType): Promise<Either<never, exportLinksOutput>> {
+  console.log("asdasd");
+  
+  const {searchQuery} = inputSchema.parse(input)
+
+  const {sql, params} = db
+    .select({
+      id: links.id,
+      linkOriginal: links.linkOriginal,
+      linkEncurtado: links.linkEncurtado,
+      accessCount: links.accessCount
     })
+    .from(links)
+    .where(
+      searchQuery ? ilike(links.linkOriginal, `%${searchQuery}%`) : undefined
+    )
+    .toSQL()
 
-   const pass = new PassThrough() 
+  const consulta = pg.unsafe(sql, params as string[]).cursor(5)
 
-   const geraCSV = pipeline(
+  const csv = stringify({
+    delimiter: ",",
+    header: true,
+    columns: [
+      {key: "id", header: "ID"},
+      {key: "linkOriginal", header: "Link original"},
+      {key: "linkEncurtado", header: "Link encurtado"},
+      {key: "accessCount", header: "Contagem de acesso"}
+    ]
+  })
+
+  const pass = new PassThrough() 
+
+  const geraCSV = pipeline(
     consulta,
     new Transform({
       objectMode: true,
@@ -35,20 +63,18 @@ export async function exportLinks(): Promise<string> {
         callback()
       },
     }),
-    csv,
-    pass
-   )
+  csv,
+  pass
+  )
 
-   const uploadFile = uploadFiles({
-    folder: "downloads",
-    fileName: "testando123",
-    contentType: "csv",
-    contentStream: pass
-   })
+  const uploadFile = uploadFiles({
+  folder: "downloads",
+  fileName: `${new Date().toISOString()}-links.csv`,
+  contentType: "csv",
+  contentStream: pass
+  })
 
-   const x = Promise.all([geraCSV, uploadFile])
-
-    console.log(x);
-    
-    return "testestes"
+  const [{url}] = await Promise.all([uploadFile ,geraCSV])
+  
+  return makeRight({url})
 }
