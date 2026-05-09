@@ -5,7 +5,7 @@ import { isRight, unwrapEither } from "../../shared/either";
 
 export const newLink: FastifyPluginAsyncZod = async server => {
     server.post(
-        '/newLink',
+        '/newlink',
         {
             schema: {
                 summary: 'Create new link',

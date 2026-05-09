@@ -9,7 +9,8 @@ const responseSchema = z.array(
     z.object({
         id: z.string(),
         linkOriginal: z.string(),
-        linkEncurtado: z.string()
+        linkEncurtado: z.string(),
+        accessCount: z.number()
     })
 )
 

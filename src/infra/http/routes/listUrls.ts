@@ -15,7 +15,8 @@ export const listUrls: FastifyPluginAsyncZod = async server => {
                         z.object({
                             id: z.string(),
                             linkOriginal: z.string(),
-                            linkEncurtado: z.string()
+                            linkEncurtado: z.string(),
+                            accessCount: z.number()
                         })
                     ),
                     404: z.string().default("No link was found"),
