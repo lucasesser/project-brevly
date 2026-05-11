@@ -1,4 +1,4 @@
-import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
+import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import getUrls from "../../../app/functions/getrUrls";
 import z from "zod";
 import { isRight, unwrapEither } from "../../shared/either";
@@ -19,7 +19,6 @@ export const listUrls: FastifyPluginAsyncZod = async server => {
                             accessCount: z.number()
                         })
                     ),
-                    404: z.string().default("No link was found"),
                     503: z.string().default("Error occurred while get Urls")
                 }
             }
@@ -33,8 +32,6 @@ export const listUrls: FastifyPluginAsyncZod = async server => {
                 const error = unwrapEither(urls)
 
                 switch(error.constructor.name) {
-                    case "noLinksFound":
-                        return res.status(404).send(error.message)
                     case "getUrlsError":
                         return res.status(503).send(error.message)
                 }
