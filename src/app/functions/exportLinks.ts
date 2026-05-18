@@ -19,8 +19,6 @@ type exportLinksOutput = {
 }
 
 export async function exportLinks(input: inputType): Promise<Either<never, exportLinksOutput>> {
-  console.log("asdasd");
-  
   const {searchQuery} = inputSchema.parse(input)
 
   const {sql, params} = db
