@@ -1,3 +1,4 @@
+import { env } from "../../env";
 import fastifyCors from "@fastify/cors";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
@@ -10,6 +11,8 @@ import { listUrls } from "./routes/listUrls";
 import { exportLinksList } from "./routes/exportLinksList";
 
 const server = fastify({logger: true})
+
+console.log(env.PORT);
 
 server.setValidatorCompiler(validatorCompiler)
 server.setSerializerCompiler(serializerCompiler)
@@ -45,7 +48,7 @@ server.register(accessLink)
 server.register(listUrls)
 server.register(exportLinksList)
 
-server.listen({port: 3333}, (err) => {   
+server.listen({port: env.PORT}, (err) => {   
     if(err){
         server.log.error(err)
         process.exit(1)

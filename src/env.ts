@@ -4,6 +4,20 @@ import z from "zod";
 dotenv.config()
 
 const envSchema = z.object({
+    PORT: z.string().transform((value, ctx) => {
+        const numberValue = Number(value)
+
+        if (Number.isNaN(numberValue)) {
+            ctx.addIssue({
+            code: "custom",
+            message: "Número inválido",
+            })
+
+            return z.NEVER
+        }
+
+        return numberValue
+    }),
     DATABASE_URL: z.url().startsWith("postgres://"),
     CLOUDFLARE_ACCOUNT_ID: z.string(),
     CLOUDFLARE_ACCESS_KEY_ID: z.string(),
