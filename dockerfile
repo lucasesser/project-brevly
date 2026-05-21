@@ -1,6 +1,5 @@
 FROM node:24.3.0-alpine
 
-#Create app directory
 WORKDIR /app
 
 COPY --chown=node:node package*.json ./
